@@ -1,0 +1,33 @@
+﻿@using iTextSharp.text;
+@using iTextSharp.text.pdf;
+@{
+    Layout = null;
+    Response.AddHeader("Content-disposition", "attachment; filename=report.pdf");
+    Response.ContentType = "application/octet-stream";
+    var db = Database.Open("Northwind");
+    var sql = "SELECT CustomerID, CompanyName, ContactName, Address, City, Country, Phone FROM Customers";
+    var data = db.Query(sql);
+    var columns = data.First().Columns;
+
+    var doc = new Document();
+    PdfWriter.GetInstance(doc,Response.OutputStream);
+    doc.SetPageSize(PageSize.A4.Rotate());
+    var arial = FontFactory.GetFont("Arial", 8, Color.BLACK);
+    var arialBold = FontFactory.GetFont("Arial", 10, Font.BOLD, Color.BLACK);
+    doc.Open();
+    var table = new PdfPTable(7) {
+        TotalWidth = 700f, 
+        LockedWidth = true
+    };
+
+    foreach(var column in columns){
+        table.AddCell(new Phrase(column, arialBold));
+    }
+    foreach(var row in data){
+        foreach(var column in columns){
+            table.AddCell(new Phrase(row[column], arial));
+        }
+    }
+    doc.Add(table);
+    doc.Close();
+}

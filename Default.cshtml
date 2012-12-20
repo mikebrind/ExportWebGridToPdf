@@ -1,0 +1,39 @@
+﻿@{
+    Page.Title = "Export To PDF";
+    var db = Database.Open("Northwind");
+    var query = "SELECT CustomerID, CompanyName, ContactName, Address, City, Country, Phone FROM Customers";
+    var data = db.Query(query);
+    var grid = new WebGrid(data, ajaxUpdateContainerId: "grid");
+}
+<h1>Export to PDF</h1>
+<div id="gridContainer">
+    <div id="grid">
+        @grid.GetHtml(    
+            tableStyle : "table",
+            alternatingRowStyle : "alternate",
+            headerStyle : "header",
+            columns: grid.Columns(
+                grid.Column("CustomerID", "ID"),
+                grid.Column("CompanyName", "Company Name"),
+                grid.Column("ContactName", "Contact Name"),
+                grid.Column("Address"),
+                grid.Column("City"),
+                grid.Column("Country"),
+                grid.Column("Phone")
+            )
+        )
+        <img src="/images/pdf-icon.png" id="pdf" alt="Export to PDF" title="Export to PDF" />
+    </div>
+</div>
+@section script{
+<script type="text/javascript">
+    $(function () {
+        $('#pdf').appendTo('tfoot tr td').on('hover', function () {
+            $(this).css('cursor', 'pointer');
+        })
+        $('#pdf').on('click', function () {
+            $('<iframe src="/GeneratePdf"></iframe>').appendTo('body').hide();
+        });
+    });
+</script>       
+}
