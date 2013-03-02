@@ -15,7 +15,7 @@
     var arial = FontFactory.GetFont("Arial", 8, Color.BLACK);
     var arialBold = FontFactory.GetFont("Arial", 10, Font.BOLD, Color.BLACK);
     doc.Open();
-    var table = new PdfPTable(7) {
+    var table = new PdfPTable(columns.Count) {
         TotalWidth = 700f, 
         LockedWidth = true
     };
@@ -25,7 +25,7 @@
     }
     foreach(var row in data){
         foreach(var column in columns){
-            table.AddCell(new Phrase(row[column], arial));
+            table.AddCell(new Phrase(row[column] != null ? row[column].ToString() : string.Empty, arial));
         }
     }
     doc.Add(table);
